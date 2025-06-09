@@ -1,0 +1,30 @@
+{
+  "name": "stockwiseapi",
+  "version": "1.0.0",
+  "description": "A lightweight RESTful API for inventory and stock management built with Node.js, Express, Sequelize, and MySQL.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thalesfgalvao/stockWiseApi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thalesfgalvao/stockWiseApi/issues"
+  },
+  "homepage": "https://github.com/thalesfgalvao/stockWiseApi#readme",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.1",
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.3"
+  }
+}
