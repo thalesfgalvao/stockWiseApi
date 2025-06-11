@@ -3,9 +3,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const itemRoute = require('./src/routes/item.route');
-app.use(bodyParser.urlencoded({ extended: true}));
+const usuarioRoute = require('./src/routes/usuario.route');
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use('/api/itens', itemRoute)
+app.use('/api/usuarios', usuarioRoute);
+app.use('/api/itens', itemRoute);
 
-app.listen(process.env.PORTA, () => {console.log('Rodando')})
+app.listen(process.env.PORTA, () => {
+	console.log('Rodando');
+});
