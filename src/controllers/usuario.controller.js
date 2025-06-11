@@ -1,19 +1,38 @@
 //Vai receber o service
+//Controla as respostas, requisições e respostas
 const usuarioService = require('../services/usuario.service');
 
-const criar = async (req, res) => {
-	const usuario = await usuarioService.criar(req.body);
-	res.send(usuario);
+const criar = async (req, res, next) => {
+	try {
+		const response = await usuarioService.criar(req.body);
+		if (response && response.message) {
+			throw response;
+		}
+		res.send(response);
+	} catch (error) {
+		return next(error); //Next faz com que o proximo middleware seja chamado
+	}
 };
 
 const encontrarTodos = async (req, res) => {
-	const usuariosEncontrados = await usuarioService.encontrarTodos();
-	res.send(usuariosEncontrados);
+	try {
+		const response = await usuarioService.encontrarTodos();
+		res.send(response);
+	} catch (error) {
+		throw response;
+	}
 };
 
-const encontrarPorId = async (req, res) => {
-	const usuarioEncontrado = await usuarioService.encontrarPorId(req.params.id); //Passa o parâmetro dentro dessa função
-	res.send(usuarioEncontrado);
+const encontrarPorId = async (req, res, next) => {
+	try {
+		const response = await usuarioService.encontrarPorId(req.params.id); //Passa o parâmetro dentro dessa função
+		if (response && response.message) {
+			throw response; //Throw é como um break, não vai roda abaixo
+		}
+		res.send(response);
+	} catch (error) {
+		return next(error);
+	}
 };
 
 module.exports = {
