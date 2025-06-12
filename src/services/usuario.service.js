@@ -41,9 +41,21 @@ const encontrarPorId = async (id) => {
 	return usuarioEncontrado;
 };
 
+const deletar = async (id) => {
+	const encontrarUsuario = usuarioRepository.encontrarPorId(id);
+
+	if (!encontrarUsuario) {
+		return createError(404, 'Usuário não encontrado');
+	}
+
+	await usuarioRepository.deletar(id);
+	return encontrarUsuario;
+};
+
 module.exports = {
 	criar,
 	atualizar,
 	encontrarTodos,
+	deletar,
 	encontrarPorId
 };

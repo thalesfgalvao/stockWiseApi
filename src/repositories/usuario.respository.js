@@ -16,7 +16,8 @@ const atualizar = async (usuario, id) => {
 };
 
 const encontrarTodos = async () => {
-	const usuariosEncontrados = await Usuario.findAll();
+	const usuariosEncontrados =
+		await Usuario.findAll(/*{paranoid: false // Isso trará também os deletados}*/);
 	return usuariosEncontrados;
 };
 
@@ -32,10 +33,17 @@ const enconcontrarUmPorWhere = async (where) => {
 	return usuarioEncontrado;
 };
 
+const deletar = async (id) => {
+	return await Usuario.destroy({
+		where: { id: id }
+	});
+};
+
 module.exports = {
 	criar,
 	encontrarTodos,
 	atualizar,
 	encontrarPorId,
-	enconcontrarUmPorWhere
+	enconcontrarUmPorWhere,
+	deletar
 };

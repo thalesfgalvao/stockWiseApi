@@ -68,9 +68,28 @@ const encontrarPorId = async (req, res, next) => {
 	}
 };
 
+const deletar = async (req, res, next) => {
+	try {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			throw createError(422, { errors: errors.array() });
+		}
+
+		const response = await usuarioService.deletar(req.params.id); //Passa o parâmetro dentro dessa função
+
+		if (response && response.message) {
+			throw response; //Throw é como um break, não vai roda abaixo
+		}
+		res.send(response);
+	} catch (error) {
+		return next(error);
+	}
+};
+
 module.exports = {
 	criar,
 	atualizar,
 	encontrarTodos,
-	encontrarPorId
+	encontrarPorId,
+	deletar
 };
