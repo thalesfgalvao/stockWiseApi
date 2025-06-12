@@ -1,11 +1,19 @@
-//Camada responsável pela regra de negócios
+//Camada responsável pela regra de negócios, validações, autenticação e etc
 //Essa camada recebe o repository
 require('dotenv').config();
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
 const usuarioRepository = require('../repositories/usuario.respository');
+const createError = require('http-errors');
 
 const criar = async (usuario) => {
-	usuario.senha = await bcrypt.hash(usuario.senha, ~~process.env.SALT)
+	const existeUsuario = await usuarioRepository.enconcontrarUmPorWhere({
+		email: usuario.email
+	});
+
+	if (existeUsuario) {
+		return createError(409, 'Usuário já existe');
+	}
+	usuario.senha = await bcrypt.hash(usuario.senha, ~~process.env.SALT);
 	const usuarioCriado = await usuarioRepository.criar(usuario);
 	return usuarioCriado;
 };
@@ -15,13 +23,39 @@ const encontrarTodos = async () => {
 	return usuariosEncontrados;
 };
 
+const atualizar = async (usuario, id) => {
+	const existeUsuario = await usuarioRepository.encontrarPorId(id);
+
+	if (!existeUsuario) {
+		return createError(404, 'Usuário não existe');
+	}
+	await usuarioRepository.atualizar(usuario, id);
+	return await usuarioRepository.encontrarPorId(id);
+};
+
 const encontrarPorId = async (id) => {
 	const usuarioEncontrado = await usuarioRepository.encontrarPorId(id);
+	if (!usuarioEncontrado) {
+		return createError(404, 'Usuário não encontrado');
+	}
 	return usuarioEncontrado;
+};
+
+const deletar = async (id) => {
+	const encontrarUsuario = usuarioRepository.encontrarPorId(id);
+
+	if (!encontrarUsuario) {
+		return createError(404, 'Usuário não encontrado');
+	}
+
+	await usuarioRepository.deletar(id);
+	return encontrarUsuario;
 };
 
 module.exports = {
 	criar,
+	atualizar,
 	encontrarTodos,
+	deletar,
 	encontrarPorId
 };
