@@ -2,9 +2,15 @@
 const express = require('express');
 const router = express.Router();
 const usuarioController = require('../controllers/usuario.controller');
+const usuarioValidator = require('../validators/usuario.validator');
 
-router.post('/', usuarioController.criar);
+router.post('/', usuarioValidator.criar(), usuarioController.criar);
+router.put('/:id', usuarioValidator.atualizar(), usuarioController.atualizar);
 router.get('/', usuarioController.encontrarTodos);
-router.get('/:id', usuarioController.encontrarPorId);
+router.get(
+	'/:id',
+	usuarioValidator.encontrarPorId(),
+	usuarioController.encontrarPorId
+);
 
 module.exports = router;

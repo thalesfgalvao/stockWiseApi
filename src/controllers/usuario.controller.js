@@ -1,9 +1,16 @@
 //Vai receber o service
-//Controla as respostas, requisições e respostas
+//Controla as respostas e requisições
+const createError = require('http-errors');
 const usuarioService = require('../services/usuario.service');
+const { validationResult } = require('express-validator');
 
 const criar = async (req, res, next) => {
 	try {
+		const errors = validationResult(req); //Pega o resultado da requisição e joga no if
+		if (!errors.isEmpty()) {
+			// Se errors NÃO for vazio, retorna abaixo
+			throw createError(422, { errors: errors.array() });
+		}
 		const response = await usuarioService.criar(req.body);
 		if (response && response.message) {
 			throw response;
@@ -14,6 +21,28 @@ const criar = async (req, res, next) => {
 	}
 };
 
+const atualizar = async (req, res, next) => {
+	try {
+		const errors = validationResult(req); //Pega o resultado da requisição e joga no if
+		if (!errors.isEmpty()) {
+			// Se errors NÃO for vazio, retorna abaixo
+			throw createError(422, { errors: errors.array() });
+		}
+		const response = await usuarioService.atualizar(
+			{
+				nome: req.body.nome
+			},
+			req.params.id
+		);
+
+		if (response && response.message) {
+			throw response;
+		}
+		res.send(response);
+	} catch (error) {
+		return next(error);
+	}
+};
 const encontrarTodos = async (req, res) => {
 	try {
 		const response = await usuarioService.encontrarTodos();
@@ -25,6 +54,10 @@ const encontrarTodos = async (req, res) => {
 
 const encontrarPorId = async (req, res, next) => {
 	try {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			throw createError(422, { errors: errors.array() });
+		}
 		const response = await usuarioService.encontrarPorId(req.params.id); //Passa o parâmetro dentro dessa função
 		if (response && response.message) {
 			throw response; //Throw é como um break, não vai roda abaixo
@@ -37,6 +70,7 @@ const encontrarPorId = async (req, res, next) => {
 
 module.exports = {
 	criar,
+	atualizar,
 	encontrarTodos,
 	encontrarPorId
 };
