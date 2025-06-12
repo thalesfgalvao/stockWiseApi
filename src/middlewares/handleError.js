@@ -1,5 +1,5 @@
 const montarErro = (error) => {
-	if (error.erros) {
+	if (error.errors) {
 		return error.errors.map((err) => err.msg);
 	}
 	if (error.message) {
