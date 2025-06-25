@@ -86,10 +86,28 @@ const deletar = async (req, res, next) => {
 	}
 };
 
+const login = async (req, res, next) => {
+	try {
+		const errors = validationResult(req); //Pega o resultado da requisição e joga no if
+		if (!errors.isEmpty()) {
+			// Se errors NÃO for vazio, retorna abaixo
+			throw createError(422, { errors: errors.array() });
+		}
+		const response = await usuarioService.login(req.body);
+		if (response && response.message) {
+			throw response;
+		}
+		res.send(response);
+	} catch (error) {
+		return next(error); //Next faz com que o proximo middleware seja chamado
+	}
+};
+
 module.exports = {
 	criar,
 	atualizar,
 	encontrarTodos,
 	encontrarPorId,
+	login,
 	deletar
 };
