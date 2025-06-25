@@ -24,9 +24,17 @@ const deletar = () => {
 	return [param('id', validatorMessage('Id')).exists().bail().isInt()];
 };
 
+const login = () => {
+	return [
+		body('email', validatorMessage('Email')).exists().bail().isString(),
+		body('senha', validatorMessage('Senha')).exists().bail().isString()
+	];
+};
+
 module.exports = {
 	criar,
 	atualizar,
 	encontrarPorId,
-	deletar
+	deletar,
+	login
 };

@@ -4,6 +4,7 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const usuarioRepository = require('../repositories/usuario.respository');
 const createError = require('http-errors');
+const { sign } = require('jsonwebtoken');
 
 const criar = async (usuario) => {
 	const existeUsuario = await usuarioRepository.enconcontrarUmPorWhere({
@@ -52,10 +53,48 @@ const deletar = async (id) => {
 	return encontrarUsuario;
 };
 
+const login = async (usuario) => {
+	const usuarioLogin = await usuarioRepository.enconcontrarUmPorWhere({
+		email: usuario.email
+	});
+
+	if (!usuarioLogin) {
+		return createError(401, 'Credenciais inválidas');
+	}
+
+	const comparacaoSenha = await bcrypt.compare(
+		usuario.senha,
+		usuarioLogin.senha
+	);
+
+	if (!comparacaoSenha) {
+		return createError(401, 'Credenciais inválidas');
+	}
+
+	const token = sign(
+		{
+			id: usuarioLogin.id
+		},
+		process.env.SECRET,
+		{
+			expiresIn: '30m'
+		}
+	);
+	delete usuarioLogin.senha;
+	return {
+		auth: true,
+		usuario: usuarioLogin,
+		token: token,
+		role: 'Sem role por enquanto',
+		mensagem: 'Login efetuado com sucesso'
+	};
+};
+
 module.exports = {
 	criar,
 	atualizar,
 	encontrarTodos,
 	deletar,
-	encontrarPorId
+	encontrarPorId,
+	login
 };
